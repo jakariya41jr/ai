@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JRS AI · পাপড়ি ও প্রস্ফুটন</title>
+    <title>JRS AI · তোমার অনলাইন সঙ্গী </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
@@ -227,33 +227,79 @@
             transform: scale(1.1) translateY(-2px);
         }
 
-        .blooming-status {
+        .typing-indicator {
             font-style: italic;
             font-size: 0.9rem;
             color: #b388ff;
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            width: fit-content;
         }
 
-        .dot-pulse {
-            width: 6px; height: 6px; border-radius: 50%;
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
             background: #b388ff;
             animation: pulse 1.5s infinite;
         }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.4; }
-            100% { transform: scale(1); opacity: 1; }
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        .creator-card {
+            background: rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 8px;
+            border-left: 4px solid #d81b60;
+        }
+        .creator-card strong {
+            color: #d81b60;
+        }
+        .creator-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .creator-links a {
+            color: #d81b60;
+            text-decoration: none;
+            font-size: 0.9rem;
+            background: rgba(216,27,96,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: 0.2s;
+        }
+        .creator-links a:hover {
+            background: #d81b60;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .msg { max-width: 90%; }
+            .input-container { padding: 5px 8px 5px 16px; }
+            .btn-icon { width: 40px; height: 40px; }
         }
     </style>
 </head>
-<body>
-
+<body class="dark-mode">
     <header>
-        <div class="brand">🌸 JRS · ব্লুম</div>
-        <a href="http://jakariya41jr.pro.bd/" class="system-tag" target="_blank">আমার প্রোফাইল</a>
+        <div class="brand">🌸 JRS · Your Ai Assistant </div>
+        <a href="https://jakariya41jr.github.io/my-profile/" class="system-tag" target="_blank">আমার প্রোফাইল</a>
     </header>
 
     <div class="chat-area" id="chatContainer">
@@ -265,13 +311,7 @@
 
     <div class="input-wrapper">
         <div class="input-container">
-            <button class="btn-icon" id="attachBtn" title="ফাইল যুক্ত করুন">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-            </button>
-            <input type="file" id="fileInput" hidden>
-            
             <input type="text" class="chat-input" id="messageInput" placeholder="আপনার চিন্তাগুলো এখানে ফুটতে দিন..." autocomplete="off">
-            
             <button class="btn-icon btn-send" id="sendBtn" aria-label="পাঠান">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
@@ -283,8 +323,14 @@
             const chatContainer = document.getElementById('chatContainer');
             const messageInput = document.getElementById('messageInput');
             const sendBtn = document.getElementById('sendBtn');
-            const fileInput = document.getElementById('fileInput');
 
+            // --- Helper: detect if the user's message is primarily Bangla ---
+            function isMessageBangla(text) {
+                const banglaRegex = /[\u0980-\u09FF]/;
+                return banglaRegex.test(text);
+            }
+
+            // --- Helper: format text with markdown-like syntax ---
             function formatText(text) {
                 return text
                     .replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
@@ -302,6 +348,7 @@
                 setTimeout(() => btn.innerText = "কপি", 2000);
             };
 
+            // --- Typewriter effect ---
             async function typeMessage(element, html) {
                 element.innerHTML = '';
                 let tempDiv = document.createElement('div');
@@ -324,40 +371,181 @@
                 }
             }
 
+            // --- Show typing indicator (language aware) ---
+            function showTyping(element, isBangla) {
+                const thinkingText = isBangla ? "🤔 চিন্তা করছি" : "🤔 Thinking";
+                element.innerHTML = `<div class="typing-indicator"><span>${thinkingText}</span><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+            }
+
+            // ==================== NAME DETECTION (expanded with all user-provided phrases) ====================
+            function isNameQuestion(message) {
+                const lower = message.toLowerCase().trim();
+                const nameKeywords = [
+                    // English
+                    'what is your name', 'your name', 'who are you', 'introduce yourself',
+                    'call you', 'what\'s your name', 'tell me your name', 'name please',
+                    'may i know your name', 'can you tell me your name', 'your identity',
+                    // Bangla – user provided
+                    'তোমার নাম কি', 'তোর নাম কি', 'কে তুই', 'কে তুমি', 'আপনি কে',
+                    'তোমার পরিচয় কি', 'তোমার নাম কি রে', 'তোর নামটা কি', 'আপনার নাম কি গো',
+                    'তোমার কি কোনো নাম আছে', 'তোমাকে কি নামে ডাকবো', 'তুমি আসলে কে',
+                    'তুমি কি মানুষ', 'তুমি কি রোবট', 'তুমি কি এআই', 'তুমি কি চ্যাটবট',
+                    'তোর নাম কি বলবি', 'তোর পরিচয় কি রে', 'তুমি কোথা থেকে এসেছো', 'তোমার বাড়ি কোথায়',
+                    'তোমার ঠিকানা কি', 'তুমি কি জ্যান্ত', 'তোমার কি প্রাণ আছে', 'তুমি কি কোনো মেশিন',
+                    'তোয়ার নাম কি', 'তোয়ারে কি কয়া ডাকে', 'তোর নাম কী রে শয়তান', 'তোর নাম কী শুনি',
+                    'আপনার নাম কি মশাই', 'কে আপনি শুনি', 'তুমি কি আমাদের মতো', 'তোমার আসল নাম কি',
+                    'তোমার ডাকনাম কি', 'তোমার ভালো নাম কি', 'তোমার নাম কি গো', 'তোমার নামটা কি বলা যাবে',
+                    'কি নাম তোমার', 'নাম কি তোমার', 'তোমার পরিচয়খানা দাও তো', 'তোর নাম কি রে বাবা',
+                    'তুমি কি কোনো সফটওয়্যার', 'তুমি কি কোনো এলিয়েন', 'তুমি কি জিন', 'তুমি কি ভূত',
+                    'তুমি কি কোনো চ্যাটবট', 'তুমি কি কোনো প্রোগ্রাম', 'তোমার অস্তিত্ব কি',
+                    'তুমি কার সাথে কথা বলো', 'তোমার কাজ কি', 'তুমি কেন এসেছো', 'তোমার সৃষ্টি কেন হয়েছে',
+                    'তোমার কি কোনো পরিবার আছে', 'তুমি কেন কথা বলো',
+                    // Additional common
+                    'জেআরএস', 'jrs', 'jrs ai', 'jrsai', 'জেআরএস এআই'
+                ];
+                return nameKeywords.some(kw => lower.includes(kw));
+            }
+
+            // ==================== CREATOR DETECTION (expanded with all user-provided phrases) ====================
+            function isAboutCreator(message) {
+                const lower = message.toLowerCase().trim();
+                const creatorKeywords = [
+                    // English
+                    'who made you', 'who created you', 'who developed you', 'your creator',
+                    'who built you', 'who programmed you', 'who is your maker', 'who designed you',
+                    'who wrote you', 'who coded you', 'who is your developer', 'who is your author',
+                    'who invented you', 'who constructed you', 'who produced you', 'your origin',
+                    // Direct about Jakariya
+                    'jakariya', 'md jakariya hasan', 'jakariya hasan', 'জাকারিয়া', 'মোঃ জাকারিয়া হাসান',
+                    'জাকারিয়া', 'মোঃ জাকারিয়া', 'জাকারিয়া ভাই', 'জাকারিয়া হাসান',
+                    // Bangla creator – user provided
+                    'কে তৈরি করেছে', 'কে বানিয়েছে', 'কে বানিয়েছে', 'তোমার স্রষ্টা',
+                    'তোমাকে কে তৈরি করেছে', 'তোমাকে কে বানিয়েছে', 'তোমার নির্মাতা',
+                    'তোমার ডেভেলপার', 'তোমার স্রষ্টা কে', 'কে তৈরি করে দিয়েছে',
+                    'তোয়াকে কে তৈরি করেছ', 'তোয়াকে কি তৈরি করেছ',
+                    'তোয়াকে কে বানাইছে', 'তোমাকে কে বানাইছে',
+                    'কে তৈরি করলো', 'কে বানিয়েছে', 'কে বানাইলো',
+                    'তোমাকে কে বানিয়েছে', 'তোমায় কে বানিয়েছে', 'তোমায় কে তৈরি করেছে',
+                    'কে তোমাকে তৈরি করেছে', 'তোমার নির্মাতা কে',
+                    'কে বানাইছে', 'কে তৈরি করছে', 'কে তৈরী করেছে', 'কে তৈরী করছে',
+                    'তোমার প্রস্তুতকারক', 'তোমার সৃষ্টিকর্তা', 'তোমার সৃষ্টিকর্তা কে',
+                    'তোয়ার স্রষ্টা', 'তোয়ার নির্মাতা', 'তোয়ার ডেভেলপার',
+                    'তোয়াকে কে বানিয়েছে', 'তোয়াকে কে তৈরী করেছে',
+                    'কে তোমাকে তৈরী করেছে', 'কে তোমার পেছনে আছে',
+                    'তোমার পিছনে কে', 'তোমার ডেভেলপার কে', 'তোমার ডেভেলপার নাম',
+                    'কোন ডেভেলপার তৈরি করেছে', 'তোমার মেকার', 'তোমার মেকার কে',
+                    // New variations from user's long list
+                    'তোমাকে কে তৈরী করেছে?', 'তোমাকে কে তৈরী করছে', 'তোমাকে কে বানিয়েছে?',
+                    'তোমার কারিগর কে?', 'তোমাকে কে জন্ম দিয়েছে?', 'তোমাকে কে রূপ দিয়েছে?',
+                    'তোমাকে কে এই ভাষায় কথা বলতে শিখিয়েছে?', 'তোমাকে কে এত বুদ্ধি দিয়েছে?',
+                    'তোমাকে কে প্রোগ্রাম করলো?', 'তোমার উদ্ভাবক কে?', 'তোমাকে কে প্রসেস করেছে?',
+                    'কে তোমাকে প্রোগ্রাম করেছে', 'কে তোমার কোড লিখেছে', 'কে তোমার নির্মাণ করেছে',
+                    'কে তোমার ডেভেলপমেন্ট করেছে', 'তোমার পেছনের মানুষ কে', 'কে তোমাকে ডিজাইন করেছে'
+                ];
+                return creatorKeywords.some(kw => lower.includes(kw));
+            }
+
+            // --- Build rich HTML about Jakariya (language aware) ---
+            function getCreatorInfo(useBangla) {
+                if (useBangla) {
+                    return `
+                        <div class="creator-card">
+                            <strong>👤 মোঃ জাকারিয়া হাসান (Md Jakariya Hasan)</strong><br>
+                            🖤 হার্টব্রোকেন উৎসাহী | 📍 কিশোরগঞ্জ, বাংলাদেশ<br>
+                            💼 পেশা: বেসরকারি চাকরি | 🕌 ধর্ম: ইসলাম | 💔 সম্পর্ক: সিঙ্গেল<br>
+                            🎯 ফোকাস: নিজেকে গড়া, আর্থিক স্বাধীনতা, আত্মসম্মান বজায় রাখা<br>
+                            🧠 ডিজিটাল কারুকাজ, জীবন পর্যবেক্ষণ, আত্মার সুরে ডুবে থাকা – এগুলো তার জগৎ।<br>
+                            <div class="creator-links">
+                                <a href="https://www.facebook.com/jakariya41jr" target="_blank">📘 Facebook</a>
+                                <a href="https://www.instagram.com/jakariya41jr" target="_blank">📷 Instagram</a>
+                                <a href="https://www.tiktok.com/@jakariya41jr" target="_blank">🎵 TikTok</a>
+                                <a href="mailto:mdjakariyahasan10@gmail.com">✉️ Email</a>
+                            </div>
+                            <em style="font-size:0.9rem;">"নীরবতার মাঝে নিজেকে ইস্পাতের মতো গড়ছি।"</em>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="creator-card">
+                            <strong>👤 Md Jakariya Hasan (মোঃ জাকারিয়া হাসান)</strong><br>
+                            🖤 Heartbroken Enthusiast | 📍 Kishoreganj, Bangladesh<br>
+                            💼 Profession: Private Job | 🕌 Religion: Islam | 💔 Relationship: Single<br>
+                            🎯 Focus: Self‑building, financial independence, preserving dignity.<br>
+                            🧠 Digital crafting, observing life, losing in soulful melodies – his world.<br>
+                            <div class="creator-links">
+                                <a href="https://www.facebook.com/jakariya41jr" target="_blank">📘 Facebook</a>
+                                <a href="https://www.instagram.com/jakariya41jr" target="_blank">📷 Instagram</a>
+                                <a href="https://www.tiktok.com/@jakariya41jr" target="_blank">🎵 TikTok</a>
+                                <a href="mailto:mdjakariyahasan10@gmail.com">✉️ Email</a>
+                            </div>
+                            <em style="font-size:0.9rem;">"Forging myself into steel inside the silence."</em>
+                        </div>
+                    `;
+                }
+            }
+
+            // --- Main send handler ---
             async function handleSend() {
                 const prompt = messageInput.value.trim();
                 if (!prompt) return;
 
+                // Detect language from user message
+                const userLangBangla = isMessageBangla(prompt);
+
+                // Display user message
                 const userDiv = document.createElement('div');
                 userDiv.className = 'msg user';
                 userDiv.innerText = prompt;
                 chatContainer.appendChild(userDiv);
-                
                 messageInput.value = '';
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
+                // Create AI message placeholder
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'msg ai';
-                aiDiv.innerHTML = `<div class="blooming-status"><div class="dot-pulse"></div>🌱 ভাবনাগুলো প্রস্ফুটিত হচ্ছে...</div>`;
                 chatContainer.appendChild(aiDiv);
+                showTyping(aiDiv, userLangBangla);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
 
+                // ---- NAME QUESTION (local) ----
+                if (isNameQuestion(prompt)) {
+                    const nameReply = userLangBangla 
+                        ? "আমার নাম **JRS Ai**। আমি আপনার বন্ধু ও সহায়ক। 🤖" 
+                        : "My name is **JRS Ai**. I'm your friend and helper. 🤖";
+                    await typeMessage(aiDiv, formatText(nameReply));
+                    return;
+                }
+
+                // ---- CREATOR / ABOUT JAKARIYA (local) ----
+                if (isAboutCreator(prompt)) {
+                    const creatorHtml = getCreatorInfo(userLangBangla);
+                    await typeMessage(aiDiv, creatorHtml);
+                    return;
+                }
+
+                // ---- OTHER QUESTIONS: call the external API ----
                 try {
                     const res = await fetch('https://bj-tricks-ai.vercel.app/chat', {
                         method: 'POST',
                         body: new URLSearchParams({ 'text': prompt })
                     });
                     const data = await res.json();
-                    const response = data.result || "দুঃখিত, আমার পাপড়িগুলো কিছুটা এলোমেলো হয়ে গেছে। দয়া করে আবার চেষ্টা করুন।";
+                    const response = data.result || (userLangBangla 
+                        ? "দুঃখিত, আমার পাপড়িগুলো কিছুটা এলোমেলো হয়ে গেছে। দয়া করে আবার চেষ্টা করুন।" 
+                        : "Sorry, my petals got a little tangled. Please try again.");
                     
                     await typeMessage(aiDiv, formatText(response));
                 } catch (e) {
-                    aiDiv.innerHTML = '<span style="color: #d81b60;">🍃 সংযোগ বিচ্ছিন্ন হয়েছে। অনুগ্রহ করে ইন্টারনেট চেক করে আবার চেষ্টা করুন।</span>';
+                    const errorMsg = userLangBangla 
+                        ? "🍃 সংযোগ বিচ্ছিন্ন হয়েছে। ইন্টারনেট চেক করে আবার চেষ্টা করুন।" 
+                        : "🍃 Connection lost. Please check your internet and try again.";
+                    aiDiv.innerHTML = `<span style="color: #d81b60;">${errorMsg}</span>`;
                 }
             }
 
+            // Event listeners
             sendBtn.addEventListener('click', handleSend);
             messageInput.addEventListener('keypress', e => { if(e.key === 'Enter') handleSend(); });
-            document.getElementById('attachBtn').addEventListener('click', () => fileInput.click());
         })();
     </script>
 </body>
