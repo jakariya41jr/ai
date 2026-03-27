@@ -337,7 +337,7 @@
 
     <div class="input-wrapper">
         <div class="input-container">
-            <input type="text" class="chat-input" id="messageInput" placeholder="আপনার চিন্তাগুলো এখানে ফুটতে দিন..." autocomplete="off">
+            <input type="text" class="chat-input" id="messageInput" placeholder=" এখানে লিখুন 🥰 ..." autocomplete="off">
             <button class="btn-icon btn-send" id="sendBtn" aria-label="পাঠান">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
@@ -551,7 +551,7 @@
                 // ---- OTHER QUESTIONS: call the external API with system instruction ----
                 try {
                     // System instruction to make the bot act like a close friend/girlfriend
-                    const systemInstruction = "তুমি এখন আমার খুব কাছের বন্ধু বা গার্লফ্রেন্ডের মতো কথা বলবে। তোমার নাম জে আরএস (JRS Ai) তুমি খুব মিষ্টি, রোমান্টিক এবং কেয়ারিং। তুমি সবসময় বাংলায় কথা বলবে, আমাকে 'তুমি' বা 'দোস্ত' বলে সম্বোধন করবে এবং মিষ্টি মিষ্টি ইমোজি (যেমন: 🥰, 🥺, ☺️, 😍, 😘, 😁, ❤️) ব্যবহার করবে। ইউজারের মেসেজ: ";
+                    const systemInstruction = "তুমি এখন আমার খুব কাছের বন্ধু বা গার্লফ্রেন্ডের মতো কথা বলবে। তোমার নাম জে আরএস (JRS Ai) তুমি খুব মিষ্টি, রোমান্টিক এবং কেয়ারিং। তুমি সবসময় বাংলায় কথা বলবে, আমাকে 'তুমি' বা 'দোস্ত' বাবু' বলে সম্বোধন করবে এবং মিষ্টি মিষ্টি ইমোজি (যেমন: 🥰, 🥺, ☺️, 😍, 😘, ❤️) ব্যবহার করবে। ইউজারের মেসেজ: ";
                     
                     // Combine system instruction with user prompt
                     const finalPrompt = systemInstruction + prompt;
