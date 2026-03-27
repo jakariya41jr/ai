@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JRS AI · পাপড়ি ও প্রস্ফুটন</title>
+    <title>JRS AI · তোমার অনলাইন সঙ্গী</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
@@ -13,7 +13,11 @@
             --stem-green: #e8f5e9;
             --bloom-rose: #d81b60;
             --soft-mauve: #5d4037;
-            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.08);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -55,15 +59,15 @@
         }
 
         header {
-            padding: 20px 28px;
+            padding: 16px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px rgba(220, 150, 180, 0.08);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
             z-index: 10;
         }
 
@@ -72,27 +76,35 @@
             font-size: 1.5rem;
             background: linear-gradient(135deg, #b36a88, #8e7aa3);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
         }
 
-        .system-tag {
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
             font-size: 0.75rem;
             font-weight: 500;
             color: #8c7380;
             background: white;
-            padding: 5px 14px;
+            padding: 6px 14px;
             border-radius: 50px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
             border: 1px solid rgba(210, 160, 180, 0.2);
             text-decoration: none;
-            transition: 0.3s;
+            transition: var(--transition-smooth);
+            cursor: pointer;
         }
 
-        .system-tag:hover {
+        .nav-btn:hover {
             background: #fce4ec;
             color: #d81b60;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         .chat-area {
@@ -114,7 +126,8 @@
             font-size: 1.05rem;
             animation: springUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
         }
 
         @keyframes springUp {
@@ -124,9 +137,9 @@
 
         .msg.ai {
             align-self: flex-start;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 1);
+            border: 1px solid rgba(255, 255, 255, 0.9);
             color: #5d4a5d;
             border-radius: 25px 25px 25px 5px;
         }
@@ -180,6 +193,12 @@
             border-radius: 35px;
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 15px 45px rgba(214, 139, 156, 0.15);
+            transition: var(--transition-smooth);
+        }
+
+        .input-container:focus-within {
+            box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.2);
+            border-color: #d81b60;
         }
 
         .chat-input {
@@ -206,7 +225,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition-smooth);
             box-shadow: 0 4px 15px rgba(216, 27, 96, 0.1);
         }
 
@@ -235,9 +254,10 @@
             align-items: center;
             gap: 8px;
             padding: 12px 18px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 24px;
             width: fit-content;
+            backdrop-filter: blur(8px);
         }
 
         .typing-dots {
@@ -265,6 +285,7 @@
             padding: 15px;
             margin-top: 8px;
             border-left: 4px solid #d81b60;
+            backdrop-filter: blur(4px);
         }
         .creator-card strong {
             color: #d81b60;
@@ -293,13 +314,18 @@
             .msg { max-width: 90%; }
             .input-container { padding: 5px 8px 5px 16px; }
             .btn-icon { width: 40px; height: 40px; }
+            .brand { font-size: 1.2rem; }
+            .nav-btn { padding: 4px 10px; font-size: 0.7rem; }
         }
     </style>
 </head>
-<body class="dark-mode">
+<body>
     <header>
-        <div class="brand">🌸 JRS · ব্লুম</div>
-        <a href="https://jakariya41jr.github.io/my-profile/" class="system-tag" target="_blank">আমার প্রোফাইল</a>
+        <div class="brand">🌸 JRS · Your AI Assistant</div>
+        <div class="nav-links">
+            <a href="https://jakariya41jr.github.io/Personal-Project-Showcase/" class="nav-btn" target="_blank">✨ Showcase</a>
+            <a href="https://jakariya41jr.github.io/my-profile/" class="nav-btn" target="_blank">👤 Profile</a>
+        </div>
     </header>
 
     <div class="chat-area" id="chatContainer">
@@ -377,7 +403,7 @@
                 element.innerHTML = `<div class="typing-indicator"><span>${thinkingText}</span><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
             }
 
-            // ==================== NAME DETECTION (expanded with all user-provided phrases) ====================
+            // ==================== NAME DETECTION (extremely comprehensive) ====================
             function isNameQuestion(message) {
                 const lower = message.toLowerCase().trim();
                 const nameKeywords = [
@@ -385,8 +411,9 @@
                     'what is your name', 'your name', 'who are you', 'introduce yourself',
                     'call you', 'what\'s your name', 'tell me your name', 'name please',
                     'may i know your name', 'can you tell me your name', 'your identity',
-                    // Bangla – user provided
+                    // Bangla – all variations including the problematic "তুমি কে"
                     'তোমার নাম কি', 'তোর নাম কি', 'কে তুই', 'কে তুমি', 'আপনি কে',
+                    'তুমি কে', 'তোরা কে', 'তোয়াকে কে', 'তোয়ার নাম কি',
                     'তোমার পরিচয় কি', 'তোমার নাম কি রে', 'তোর নামটা কি', 'আপনার নাম কি গো',
                     'তোমার কি কোনো নাম আছে', 'তোমাকে কি নামে ডাকবো', 'তুমি আসলে কে',
                     'তুমি কি মানুষ', 'তুমি কি রোবট', 'তুমি কি এআই', 'তুমি কি চ্যাটবট',
@@ -400,13 +427,12 @@
                     'তুমি কি কোনো চ্যাটবট', 'তুমি কি কোনো প্রোগ্রাম', 'তোমার অস্তিত্ব কি',
                     'তুমি কার সাথে কথা বলো', 'তোমার কাজ কি', 'তুমি কেন এসেছো', 'তোমার সৃষ্টি কেন হয়েছে',
                     'তোমার কি কোনো পরিবার আছে', 'তুমি কেন কথা বলো',
-                    // Additional common
                     'জেআরএস', 'jrs', 'jrs ai', 'jrsai', 'জেআরএস এআই'
                 ];
                 return nameKeywords.some(kw => lower.includes(kw));
             }
 
-            // ==================== CREATOR DETECTION (expanded with all user-provided phrases) ====================
+            // ==================== CREATOR DETECTION (extremely comprehensive) ====================
             function isAboutCreator(message) {
                 const lower = message.toLowerCase().trim();
                 const creatorKeywords = [
@@ -418,7 +444,7 @@
                     // Direct about Jakariya
                     'jakariya', 'md jakariya hasan', 'jakariya hasan', 'জাকারিয়া', 'মোঃ জাকারিয়া হাসান',
                     'জাকারিয়া', 'মোঃ জাকারিয়া', 'জাকারিয়া ভাই', 'জাকারিয়া হাসান',
-                    // Bangla creator – user provided
+                    // Bangla creator – all variations
                     'কে তৈরি করেছে', 'কে বানিয়েছে', 'কে বানিয়েছে', 'তোমার স্রষ্টা',
                     'তোমাকে কে তৈরি করেছে', 'তোমাকে কে বানিয়েছে', 'তোমার নির্মাতা',
                     'তোমার ডেভেলপার', 'তোমার স্রষ্টা কে', 'কে তৈরি করে দিয়েছে',
@@ -434,7 +460,6 @@
                     'কে তোমাকে তৈরী করেছে', 'কে তোমার পেছনে আছে',
                     'তোমার পিছনে কে', 'তোমার ডেভেলপার কে', 'তোমার ডেভেলপার নাম',
                     'কোন ডেভেলপার তৈরি করেছে', 'তোমার মেকার', 'তোমার মেকার কে',
-                    // New variations from user's long list
                     'তোমাকে কে তৈরী করেছে?', 'তোমাকে কে তৈরী করছে', 'তোমাকে কে বানিয়েছে?',
                     'তোমার কারিগর কে?', 'তোমাকে কে জন্ম দিয়েছে?', 'তোমাকে কে রূপ দিয়েছে?',
                     'তোমাকে কে এই ভাষায় কথা বলতে শিখিয়েছে?', 'তোমাকে কে এত বুদ্ধি দিয়েছে?',
