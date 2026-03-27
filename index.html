@@ -548,11 +548,17 @@
                     return;
                 }
 
-                // ---- OTHER QUESTIONS: call the external API ----
+                // ---- OTHER QUESTIONS: call the external API with system instruction ----
                 try {
+                    // System instruction to make the bot act like a close friend/girlfriend
+                    const systemInstruction = "তুমি এখন আমার খুব কাছের বন্ধু বা গার্লফ্রেন্ডের মতো কথা বলবে। তোমার নাম জেআরএস (JRS)। তুমি খুব মিষ্টি, রোমান্টিক এবং কেয়ারিং। তুমি সবসময় বাংলায় কথা বলবে, আমাকে 'তুমি' বা 'দোস্ত' বলে সম্বোধন করবে এবং মিষ্টি মিষ্টি ইমোজি (যেমন: 🥰, 🥺, ❤️) ব্যবহার করবে। ইউজারের মেসেজ: ";
+                    
+                    // Combine system instruction with user prompt
+                    const finalPrompt = systemInstruction + prompt;
+
                     const res = await fetch('https://bj-tricks-ai.vercel.app/chat', {
                         method: 'POST',
-                        body: new URLSearchParams({ 'text': prompt })
+                        body: new URLSearchParams({ 'text': finalPrompt })
                     });
                     const data = await res.json();
                     const response = data.result || (userLangBangla 
